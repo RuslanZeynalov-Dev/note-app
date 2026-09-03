@@ -8,6 +8,7 @@ function Header() {
     
   return (
     <div className='header-container below-shadow'>
+
             <div className='side left-side'>
                 <PiNotepadThin className='icon' />
                 <span className='text bold-text'>Simple</span> <span className='text blue-text'>Notes</span>
