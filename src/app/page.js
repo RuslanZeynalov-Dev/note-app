@@ -1,69 +1,186 @@
-import Image from "next/image";
+"use client"
+
+import "./home.css"
+import {MdOutlineEdit} from "react-icons/md";
+import {RiDeleteBinLine} from "react-icons/ri";
+import {IoShareOutline} from "react-icons/io5";
+import {FaPlus} from "react-icons/fa6";
+import Spacer from "@/mycomponents/Spacer";
+import MyEditor from "@/mycomponents/MyEditor";
+import React, {useEffect, useRef, useState} from "react";
+import useNotes from "@/store/notes";
+
+import parse from 'html-react-parser'; //
+
+const ContentState = Object.freeze({
+    CREATING: 'creating',
+    VIEWING: 'viewing',
+    EDITING: 'editing',
+    EMPTY: "empty"
+});
+
+const shareNote = async(title, content)=>{
+    if(navigator.share){
+        try{
+            await navigator.share({
+                title,
+                content
+            })
+
+        }catch(e){
+            console.log("Share cancelled "+e)
+        }
+    }else{
+        await navigator.clipboard.writeText(content);
+        alert(
+            "Browser doesnt support to share\n" +
+            "Copied to clipboard"
+        )
+    }
+}
+
 
 export default function Home() {
-  return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.js
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+
+    const [loaded, setLoaded] = useState(false);
+
+
+
+    const [contentState, setcontentState] = useState(ContentState.EMPTY); //"viewing" "creating" "editing" "empty"
+
+    const [currentNote, setCurrentNote] = useState(null);
+
+
+    const titleRef = useRef(null);
+    const editorRef = useRef(null);
+
+
+    const {createNote, getAllNotes, getNoteById, deleteNoteById} = useNotes(state => state);
+
+    useEffect(() => {
+        setLoaded(true);
+        console.log("loaded")
+    }, [])
+
+    const saveNote = () => {
+        const title = titleRef.current.value;
+        const content = editorRef.current.value;
+
+        if (title.trim() === "" || content.trim() === "") {
+            return;
+        }
+
+        var newNote = {
+            title: title,
+            content: content,
+        }
+
+        if(currentNote!=null){
+            newNote.id = currentNote.id;
+            createNote(newNote);
+        }else{
+            newNote.id = crypto.randomUUID();
+            createNote(newNote);
+        }
+
+        setCurrentNote(newNote);
+        setcontentState(ContentState.VIEWING);
+
+    }
+
+
+
+    return (
+
+        <div className="container">
+            <div className="side navigation">
+
+                <div className="nav-act-container">
+
+                    <button className="icon-text-button new-note-button" onClick={
+                        ()=>{
+                            setCurrentNote(null);
+                            setcontentState(ContentState.CREATING)
+                        }}>
+                        <FaPlus/>
+                        <span>New Note</span>
+                    </button>
+
+                </div>
+
+                <div className="nav-notes-container">
+                    {   loaded &&
+                        getAllNotes().map(
+                            (note) => (
+                                <button onClick={()=>{
+                                    setCurrentNote(getNoteById(note.id))
+                                    setcontentState(ContentState.VIEWING);
+                                }} className={"note-card" + ((currentNote && currentNote.id===note.id)?" active":"") }  key={note.id}>{note.title}</button>
+
+                            )
+                        )
+                    }
+                </div>
+
+
+            </div>
+
+            <div className="side content">
+                <div className="con-act-container">
+
+                    {[ContentState.VIEWING].includes(contentState) && (
+                        <b>{currentNote.title}</b>
+                    )}
+
+                    <Spacer/>
+
+
+                    {[ContentState.CREATING, ContentState.EDITING].includes(contentState) && (
+                        <button className="icon-text-button con-act-button" onClick={()=>{
+                            saveNote();
+                        }}>
+                            <MdOutlineEdit/>
+                            <span>Save</span>
+                        </button>
+                    )}
+                    {[ContentState.VIEWING].includes(contentState) && (
+                        <button className="icon-text-button con-act-button" onClick={()=>{
+                            setcontentState(ContentState.EDITING)
+                        }}>
+                            <MdOutlineEdit/>
+                            <span>Edit</span>
+                        </button>
+                    )}
+                    {[ContentState.VIEWING].includes(contentState) && (
+                        <button className="icon-text-button con-act-button" onClick={()=>{
+                            deleteNoteById(currentNote.id)
+                            setcontentState(ContentState.EMPTY)
+                        }}>
+                            <RiDeleteBinLine/>
+                            <span>Delete</span>
+                        </button>
+                    )}
+                    {[ContentState.VIEWING].includes(contentState) && currentNote!=null && (
+                        <button className="icon-text-button con-act-button" onClick={() => shareNote(currentNote.title, currentNote.content)}>
+                            <IoShareOutline/>
+                            <span>Share</span>
+                        </button>
+                    )}
+
+                </div>
+                <div className="con-text-container">
+
+                    {contentState === ContentState.CREATING && <MyEditor title_={""} content_={""} titleRef={titleRef} editorRef={editorRef} />}
+                    {contentState === ContentState.EDITING && currentNote && <MyEditor title_={currentNote.title} content_={currentNote.content} titleRef={titleRef} editorRef={editorRef} />}
+
+                    {[ContentState.VIEWING].includes(contentState) && (
+                        <div>
+                            {parse(currentNote.content)}
+                        </div>
+                    )}
+                </div>
+            </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+
+    );
 }

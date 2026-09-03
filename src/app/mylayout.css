@@ -1,0 +1,51 @@
+:root{
+    --theme-text-color: #324d7f;
+    --theme-border-radius: 1vh
+}
+html{
+    font-size: 16px;
+}
+@media (min-width: 1400px){
+    html{
+        font-size: 20px;
+    }
+}
+
+
+body{
+
+    background-color: #d2d9e1;
+    margin: 0;
+    padding: 0;  
+
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+*{
+    box-sizing: border-box;
+
+}
+
+
+
+
+.main-content {
+    flex: 1;
+}
+
+button{
+    border: none;
+    display: flex;
+    align-items: center;
+    font-size: 0.8rem;
+    border-radius: var(--theme-border-radius);
+}
+button.transparent{
+    background-color: transparent;
+}
+button:active{
+
+    scale: 0.90;
+}
