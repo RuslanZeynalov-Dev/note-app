@@ -5,10 +5,10 @@ function Footer() {
     <div className='footer-container'>
 
         <button className={"button transparent"}>
-            About
+            Creator:
         </button>
         <button className={"button transparent"}>
-            Help
+            Ruslan Zeynalov
         </button>
         {/*<button className={"button transparent"}>*/}
         {/*    Logout*/}

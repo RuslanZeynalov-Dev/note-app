@@ -1,0 +1,19 @@
+@media (max-width: 768px) {
+    .container.has-content .side.navigation {
+        display: none;
+    }
+
+    .container:not(.has-content) .side.content {
+        display: none;
+    }
+
+
+
+    .container.has-content {
+        margin: 10px 40px;
+    }
+
+    .side.content {
+        min-width: initial;
+    }
+}

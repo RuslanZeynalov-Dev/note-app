@@ -1,6 +1,7 @@
 "use client"
 
 import "./home.css"
+import "./homeMobile.css"
 import {MdOutlineEdit} from "react-icons/md";
 import {RiDeleteBinLine} from "react-icons/ri";
 import {IoShareOutline} from "react-icons/io5";
@@ -10,7 +11,10 @@ import MyEditor from "@/mycomponents/MyEditor";
 import React, {useEffect, useRef, useState} from "react";
 import useNotes from "@/store/notes";
 
+import { IoIosArrowBack } from "react-icons/io";
 import parse from 'html-react-parser'; //
+
+import {v4 as uuidv4} from 'uuid';
 
 const ContentState = Object.freeze({
     CREATING: 'creating',
@@ -31,11 +35,16 @@ const shareNote = async(title, content)=>{
             console.log("Share cancelled "+e)
         }
     }else{
-        await navigator.clipboard.writeText(content);
-        alert(
-            "Browser doesnt support to share\n" +
-            "Copied to clipboard"
-        )
+        if(navigator.clipboard){
+            await navigator.clipboard.writeText(content);
+            alert(
+                "Browser doesnt support to share\n" +
+                "Copied to clipboard"
+            )
+        }else {
+            alert("Couldn't copy to clipboard or share")
+        }
+
     }
 }
 
@@ -79,7 +88,7 @@ export default function Home() {
             newNote.id = currentNote.id;
             createNote(newNote);
         }else{
-            newNote.id = crypto.randomUUID();
+            newNote.id = uuidv4();
             createNote(newNote);
         }
 
@@ -92,8 +101,8 @@ export default function Home() {
 
     return (
 
-        <div className="container">
-            <div className="side navigation">
+        <div className={"container"+(contentState!==ContentState.EMPTY?" has-content":"")}>
+            <nav className="side navigation">
 
                 <div className="nav-act-container">
 
@@ -123,10 +132,19 @@ export default function Home() {
                 </div>
 
 
-            </div>
+            </nav>
 
-            <div className="side content">
+            <main className="side content">
                 <div className="con-act-container">
+
+                    { contentState!==ContentState.EMPTY &&
+                        <button  className="icon-text-button con-act-button" onClick={()=>{
+                            setcontentState(ContentState.EMPTY)
+                            setCurrentNote(null);
+                        }}>
+                            <IoIosArrowBack />
+                        </button>
+                    }
 
                     {[ContentState.VIEWING].includes(contentState) && (
                         <b>{currentNote.title}</b>
@@ -179,7 +197,7 @@ export default function Home() {
                         </div>
                     )}
                 </div>
-            </div>
+            </main>
         </div>
 
     );

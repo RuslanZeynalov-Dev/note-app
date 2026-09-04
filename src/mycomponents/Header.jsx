@@ -1,6 +1,5 @@
 import React from 'react'
 import {PiNotepadThin} from "react-icons/pi";
-import {CiSettings} from "react-icons/ci";
 import "./myheader.css"
 import Spacer from './Spacer';
 
@@ -21,10 +20,15 @@ function Header() {
                 {/*    <PiUserCircleThin className='icon'/>*/}
                 {/*</button>*/}
 
-                <button className={"button transparent"}>
+                {/*<button className={"button transparent"}>*/}
 
-                    <CiSettings className='icon'/>
-                </button>
+                {/*    <CiSettings className='icon'/>*/}
+                {/*</button>*/}
+                {/*<button className={"button transparent"}>*/}
+
+                {/*    <CiMenuBurger className='icon' id={"nav-menu-button"}/>*/}
+                {/*</button>*/}
+
             </div>
             
     </div>

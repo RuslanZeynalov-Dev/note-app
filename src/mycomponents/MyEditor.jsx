@@ -24,7 +24,12 @@ export default function MyEditor({title_, content_, titleRef, editorRef}) {
             <JoditEditor
                 id="editor-basic"
                 ref={editorRef}
+
                 value={content_}
+
+                config={{
+                    minHeight: "200px"
+                }}
             />
 
         </div>

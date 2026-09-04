@@ -2,4 +2,21 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
+    height: 100%;
+}
+
+.jodit-react-container {
+    flex: 1;
+}
+
+.jodit-container {
+    flex:1;
+    height: 100% !important;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.jodit-jodit__workplace-slot_center_true {
+    flex: 1 !important;
 }
