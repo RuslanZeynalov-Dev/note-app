@@ -8,3 +8,24 @@
     gap: 10px;
     align-items: center;
 }
+
+.about-button {
+    anchor-name: --about-button;
+    position: relative;
+}
+
+.about-part {
+    display: none;
+    position: absolute;
+    position-anchor: --about-button;
+    position-area: top;
+    bottom: 10px;
+    background-color: #efdbb5;
+    padding: 16px;
+    border-radius: 10px;
+}
+
+#footer-root:has( .about-button:focus)>.about-part,
+.about-part:focus {
+    display: block;
+}

@@ -36,17 +36,17 @@ body{
     flex: 1;
 }
 
-button{
+.button, button{
     border: none;
     display: flex;
     align-items: center;
     font-size: 0.8rem;
     border-radius: var(--theme-border-radius);
 }
-button.transparent{
+.button.transparent, button.transparent{
     background-color: transparent;
 }
-button:active{
+button:active, .button:active{
 
     scale: 0.90;
 }
