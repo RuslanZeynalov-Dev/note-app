@@ -25,7 +25,8 @@
     border-radius: 10px;
 }
 
-#footer-root:has( .about-button:focus)>.about-part,
-.about-part:focus {
+#footer-root:has( .about-button:focus-within)>.about-part,
+.about-part:focus-within,
+.about-part:active{
     display: block;
 }
