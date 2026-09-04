@@ -139,8 +139,15 @@ export default function Home() {
 
                     { contentState!==ContentState.EMPTY &&
                         <button  className="icon-text-button con-act-button" onClick={()=>{
-                            setcontentState(ContentState.EMPTY)
-                            setCurrentNote(null);
+                            switch (contentState) {
+                                case ContentState.EDITING:
+                                    setcontentState(ContentState.VIEWING);
+                                    break;
+                                default:
+                                    setcontentState(ContentState.EMPTY);
+                                    setCurrentNote(null);
+                            }
+
                         }}>
                             <IoIosArrowBack />
                         </button>
